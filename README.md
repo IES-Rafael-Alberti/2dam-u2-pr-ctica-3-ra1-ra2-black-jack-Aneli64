@@ -1,71 +1,54 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/2k2-pIk4)
-# Práctica 3 - Black Jack
+[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/A9eK7Esk)
+# DAM2_23_24_PMDM_U2_Practica02
 
-## Desarrollo de un Juego de Blackjack con Modos de Juego y Clases Adicionales
+## Práctica 2 - Carta más alta
 
-### Objetivo:
+Creardos clases enumeradas con la información de los Palos y Naipes de una baraja francesa:
 
-El objetivo de esta práctica es aplicar los conceptos de Jetpack Compose, Kotlin y programación orientada a objetos para desarrollar un juego de Blackjack en Android Studio. En esta versión, se introducirán dos modos de juego (2 jugadores y 1 jugador contra la máquina) y se implementarán clases adicionales para gestionar la baraja, las cartas y los jugadores.
+	* Palos: CORAZONES, DIAMANTES, TREBOLES y PICAS.
+	* Napies: AS, DOS, TRES, ..., DIEZ, VALET, DAME, ROI
 
-### Requisitos Básicos:
-1. Interfaz Gráfica:
 
-   ```
-   Diseñar la interfaz del juego utilizando Jetpack Compose, considerando la opción de seleccionar el modo de juego al inicio.
-   Mostrar las cartas de los jugadores y del crupier de manera clara y atractiva (imágenes).
-   ```
+Crear dos clases llamadas Carta y Baraja.
 
-2. Lógica del Juego:
+- La clase Carta tendrá las siguientes propiedades:
+	
+	* nombre (Naipes)
+	* palo (Palos)
+	* puntosMin (Int)
+	* puntosMax (Int)
+	* idDrawable (Int)
+	
+	** Dejamos preparada la clase para el juego del BlackJack... solo el AS tiene dos tipos de puntuación: 1 u 11 según mejor nos convenga con el resto de cartas.
+	** idDrawable es un número que me ayudará a encontrar mi imagen en los recursos.
 
-   ```
-   Implementar la lógica del juego de Blackjack para ambos modos de juego.
-   Esto incluye la distribución inicial de cartas, el cálculo de la puntuación de la mano y las decisiones del jugador (pedir carta, plantarse, etc.).
-   ```
+- La clase Baraja tendrá su única propiedad y los métodos dentro de un companiion object, ya que la vamos a tratar de forma estática y no vamos a generar objetos de dicha clase:
+	
+	* listaCartas (ArrayList<Carta>)
+	
+	Métodos:
+	
+	* crearBaraja() => Generar la lista de 52 cartas de la baraja.
+	* barajar() => Desordenar las cartas de la lista de cartas de la baraja (shuffle)
+	* dameCarta() => Retorna la última carta de la lista de cartas y la elimina de la baraja.
 
-3. Manejo de Estado:
+Funcionamiento de la aplicación:
 
-   ```
-   Utilizar ViewModels para gestionar el estado del juego de manera eficiente.
-   Actualizar la interfaz de usuario de acuerdo con el estado actual del juego.
-   ```
+	* La aplicación debe mostrar una carta boca abajo y debajo de ella dos botones: "Dame Carta" y "Reiniciar".
 
-4. Clases Enumeradas:
+	* Si pulsamos en el primer botón cambiará la imagen por una carta de la baraja (método dameCarta de Baraja)
 
-   ```
-   Crear dos clases enumeradas: una para definir los palos de la baraja y otra para los nombres de las cartas de cada palo.
-   ```
-   
-5. Clase Baraja:
+	* Si pulsamos en el segundo botón volverá a crear la lista de cartas de la baraja, las desordenará y mostrará la imagen de la carta boca abajo.
 
-   ```
-   Crear una clase Baraja con un companion object que contenga:
-   - Una lista de objetos Carta que representan las cartas de la baraja.
-   - Métodos para crear una nueva baraja y barajar o desordenar las cartas.
-   ```
-  
-6. Modos de Juego:
+Recursos:
 
-   ```
-   Implementar dos modos de juego:
-   - Modo 1 Jugador contra la Máquina: El jugador juega contra la máquina (crupier).
-   - Modo 2 Jugadores: Dos jugadores compiten entre sí.
+	* 53 imágenes en la carpeta drawable, una boca abajo y el resto de cartas de una baraja francesa (por ejemplo, en Freepik tenéis recursos gratuitos con los que podéis hacerlo).
+	* Las imágenes tendrán un tamaño reducido que ocupen poco espacio (si son redondeadas, mejor en PNG por permitir la transparencia del fondo).
+	* Para retornar el id de un recurso mediante una variable podéis usar 
+	
+	    val context = LocalContext.current
 
-### Clases Adicionales:
+		context.resources.getIdentifier("nombreRecurso", "drawable", context.packageName)
 
-1. Clase Carta:
-
-   ```
-   Crear una clase Carta que represente una carta de la baraja con propiedades como palo, nombre, valor...
-   ```
-
-2. Clase Jugador:
-
-   ```
-   Crear una clase Jugador que tenga propiedades como nombre, mano (conjunto de cartas), fichas (en el caso del modo 2 Jugadores), etc.
-   ```
-   
-### Recursos:
-
-   * Documentación oficial de Jetpack Compose: [Compose Overview](https://developer.android.com/jetpack/compose?hl=es-419)
-   * Documentación oficial de Kotlin: [Kotlin Docs](https://kotlinlang.org/docs/home.html)
-   * Recuerda fomentar la modularidad y la reutilización del código mediante la implementación de clases y objetos bien estructurados.
+	** Si generáis los nombres de los recursos cómo el nombre del palo y su idDrawable os será muy fácil crear una función Composable que recupere el id del recurso...
+		Por ejemplo, algo así... "${carta.palo.toString().lowercase()}_${carta.idDrawable}"
