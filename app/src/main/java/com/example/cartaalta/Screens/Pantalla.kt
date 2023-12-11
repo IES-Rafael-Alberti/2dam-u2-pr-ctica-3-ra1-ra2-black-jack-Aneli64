@@ -165,7 +165,7 @@ fun UpdateCard(dorsoCarta: String, context: Context): Int {
 fun Juego() {
     Wallpaper()
 
-    //Variables necesarias para las cartas de nuestro juego
+    /* //Variables necesarias para las cartas de nuestro juego
     val context = LocalContext.current
     var dorsoCarta by rememberSaveable { mutableStateOf("detras") }
 
@@ -254,10 +254,10 @@ fun Juego() {
 
     UpdateCard(dorsoCarta = dorsoCarta, context = context)
 
-
+*/
 }
 
-/* CODIGO A REVISAR (CODIGO DE BOTON DAME CARTA - FUNCIONANDO)
+    /* CODIGO A REVISAR (CODIGO DE BOTON DAME CARTA - FUNCIONANDO)
 if (playerTurn1 && !btnPasarP1IsClicked && puntPlayer1 < 21) {
                     dorsoCarta = "c${carta.idDrawable}"
                     player1.mano.add(carta.idDrawable)
@@ -283,134 +283,134 @@ if (playerTurn1 && !btnPasarP1IsClicked && puntPlayer1 < 21) {
                 }
  */
 
-@Composable
-fun puntuacionesPartida(
-    puntPlayer1: Int,
-    manoSizeP1: MutableList<Int>,
-    puntPlayer2: Int,
-    manoSizeP2: MutableList<Int>,
-    botonPasarJ1: Boolean,
-    botonPasarJ2: Boolean
-) {
+    @Composable
+    fun puntuacionesPartida(
+        puntPlayer1: Int,
+        manoSizeP1: MutableList<Int>,
+        puntPlayer2: Int,
+        manoSizeP2: MutableList<Int>,
+        botonPasarJ1: Boolean,
+        botonPasarJ2: Boolean
+    ) {
 
-    var boolPuntosValidos = false
-    var boolPuntosMayor = false
-    var boolNumCartas = false
+        var boolPuntosValidos = false
+        var boolPuntosMayor = false
+        var boolNumCartas = false
 
-    when {
-        puntPlayer1 <= 21 -> boolPuntosValidos = true
-        puntPlayer1 > puntPlayer2 -> boolPuntosMayor = true
-        manoSizeP1.size < manoSizeP2.size -> boolNumCartas = true
-    }
-    if (botonPasarJ1 && botonPasarJ2) {
         when {
-            boolPuntosValidos && boolPuntosMayor -> Text(text = "GANADOR JUGADOR 1!!!")
-            boolPuntosValidos && !boolPuntosMayor -> Text(text = "GANADOR JUGADOR 2!!!")
-            puntPlayer1 == puntPlayer2 -> {
-                if (boolNumCartas) Text(text = "GANADOR JUGADOR 1!!!") else Text(text = "GANADOR JUGADOR 2!!!")
+            puntPlayer1 <= 21 -> boolPuntosValidos = true
+            puntPlayer1 > puntPlayer2 -> boolPuntosMayor = true
+            manoSizeP1.size < manoSizeP2.size -> boolNumCartas = true
+        }
+        if (botonPasarJ1 && botonPasarJ2) {
+            when {
+                boolPuntosValidos && boolPuntosMayor -> Text(text = "GANADOR JUGADOR 1!!!")
+                boolPuntosValidos && !boolPuntosMayor -> Text(text = "GANADOR JUGADOR 2!!!")
+                puntPlayer1 == puntPlayer2 -> {
+                    if (boolNumCartas) Text(text = "GANADOR JUGADOR 1!!!") else Text(text = "GANADOR JUGADOR 2!!!")
+                }
             }
         }
     }
-}
 
-//Funcion que nos muestra el turno de cada jugador
-@Composable
-fun TurnoJugador(turnoJug1: Boolean) {
-    if (turnoJug1) {
-        Row(Modifier.padding(30.dp)) {
-            Text(text = "Turno Jugador 1")
+    //Funcion que nos muestra el turno de cada jugador
+    @Composable
+    fun TurnoJugador(turnoJug1: Boolean) {
+        if (turnoJug1) {
+            Row(Modifier.padding(30.dp)) {
+                Text(text = "Turno Jugador 1")
+            }
+        } else {
+            Row(Modifier.padding(30.dp)) {
+                Text(text = "Turno Jugador 2")
+            }
         }
-    } else {
-        Row(Modifier.padding(30.dp)) {
-            Text(text = "Turno Jugador 2")
-        }
+
     }
 
-}
-
-@Composable
-fun PuntosJug1(puntosJug1: Int) {
-    Text(text = "Puntos Jugador 1 -> $puntosJug1")
-}
-
-@Composable
-fun PuntosJug2(puntosJug2: Int) {
-    Text(text = "Puntos Jugador 2 -> $puntosJug2")
-}
-
-@Composable
-fun ShowPuntosJugadores(puntPlayer1: Int, puntPlayer2: Int) {
-    Row {
-        PuntosJug1(puntosJug1 = puntPlayer1)
-        Spacer(modifier = Modifier.width(40.dp))
-        PuntosJug2(puntosJug2 = puntPlayer2)
+    @Composable
+    fun PuntosJug1(puntosJug1: Int) {
+        Text(text = "Puntos Jugador 1 -> $puntosJug1")
     }
-}
 
-//Funcion lambda que al pulsar en el boton dame carta, obtiene una carta de la baraja
-@Composable
-fun dameCartaJugador1(onDameCartaClick: () -> Unit) {
-    Row(Modifier.padding(10.dp)) {
-        Button(
-            onClick = {
-                onDameCartaClick()
-            },
-            Modifier
-                .padding(10.dp)
-                .border(2.dp, color = Color.Red, shape = CircleShape),
-            colors = ButtonDefaults.textButtonColors(Color.White)
-        ) {
-            Text(
-                text = "Dame carta",
-                color = Color.Black,
-                fontWeight = FontWeight.Bold,
-                fontSize = 20.sp
-            )
+    @Composable
+    fun PuntosJug2(puntosJug2: Int) {
+        Text(text = "Puntos Jugador 2 -> $puntosJug2")
+    }
+
+    @Composable
+    fun ShowPuntosJugadores(puntPlayer1: Int, puntPlayer2: Int) {
+        Row {
+            PuntosJug1(puntosJug1 = puntPlayer1)
+            Spacer(modifier = Modifier.width(40.dp))
+            PuntosJug2(puntosJug2 = puntPlayer2)
         }
     }
-}
 
-//Funcion lambda que al pulsar en el boton dame carta, obtiene una carta de la baraja
-@Composable
-fun dameCartaJugador2(onDameCartaClick: () -> Unit) {
-    Row(Modifier.padding(10.dp)) {
-        Button(
-            onClick = {
-                onDameCartaClick()
-            },
-            Modifier
-                .padding(10.dp)
-                .border(2.dp, color = Color.Red, shape = CircleShape),
-            colors = ButtonDefaults.textButtonColors(Color.White)
-        ) {
-            Text(
-                text = "Dame carta",
-                color = Color.Black,
-                fontWeight = FontWeight.Bold,
-                fontSize = 20.sp
-            )
+    //Funcion lambda que al pulsar en el boton dame carta, obtiene una carta de la baraja
+    @Composable
+    fun dameCartaJugador1(onDameCartaClick: () -> Unit) {
+        Row(Modifier.padding(10.dp)) {
+            Button(
+                onClick = {
+                    onDameCartaClick()
+                },
+                Modifier
+                    .padding(10.dp)
+                    .border(2.dp, color = Color.Red, shape = CircleShape),
+                colors = ButtonDefaults.textButtonColors(Color.White)
+            ) {
+                Text(
+                    text = "Dame carta",
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp
+                )
+            }
         }
     }
-}
 
-@Composable
-fun pasar(onPasaClick: () -> Unit) {
-    Row(Modifier.padding(10.dp)) {
-        Button(
-            onClick = {
-                onPasaClick()
-            },
-            Modifier
-                .padding(10.dp)
-                .border(2.dp, color = Color.Red, shape = CircleShape),
-            colors = ButtonDefaults.textButtonColors(Color.White)
-        ) {
-            Text(
-                text = "Pasar",
-                color = Color.Black,
-                fontWeight = FontWeight.Bold,
-                fontSize = 20.sp
-            )
+    //Funcion lambda que al pulsar en el boton dame carta, obtiene una carta de la baraja
+    @Composable
+    fun dameCartaJugador2(onDameCartaClick: () -> Unit) {
+        Row(Modifier.padding(10.dp)) {
+            Button(
+                onClick = {
+                    onDameCartaClick()
+                },
+                Modifier
+                    .padding(10.dp)
+                    .border(2.dp, color = Color.Red, shape = CircleShape),
+                colors = ButtonDefaults.textButtonColors(Color.White)
+            ) {
+                Text(
+                    text = "Dame carta",
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp
+                )
+            }
         }
     }
-}
+
+    @Composable
+    fun pasar(onPasaClick: () -> Unit) {
+        Row(Modifier.padding(10.dp)) {
+            Button(
+                onClick = {
+                    onPasaClick()
+                },
+                Modifier
+                    .padding(10.dp)
+                    .border(2.dp, color = Color.Red, shape = CircleShape),
+                colors = ButtonDefaults.textButtonColors(Color.White)
+            ) {
+                Text(
+                    text = "Pasar",
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp
+                )
+            }
+        }
+    }
