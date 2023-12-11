@@ -196,11 +196,24 @@ fun Juego() {
     ) {
 
         Row {
-            dameCartaJugador2(onDameCartaClick = { Baraja.dameCarta()
-              /*  dorsoCarta = "c${carta.idDrawable}"
-                player2.mano.add(carta.idDrawable)*/
+            dameCartaJugador2(onDameCartaClick = {
+                val carta = Baraja.dameCarta()
+                dorsoCarta = "c${carta.idDrawable}"
+                player2.mano.add(carta.idDrawable)
             })
-            pasar(onPasaClick = {})
+            pasar(onPasaClick = {
+                if (playerTurn1) {
+                    playerTurn1 = false
+                    playerTurn2 = true
+                    //definimos isClicked a false para que el jug no pueda pedir cartas de nuevo
+                    btnPasarP1IsClicked = true
+                } else if (playerTurn2) {
+                    playerTurn1 = true
+                    playerTurn2 = false
+                    //definimos isClicked a false para que el jug no pueda pedir cartas de nuevo
+                    btnPasarP2IsClicked = true
+                }
+            })
         }
 
         Row {
@@ -209,22 +222,33 @@ fun Juego() {
                 dorsoCarta = "c${carta.idDrawable}"
                 player1.mano.add(carta.idDrawable)
             })
-            pasar(onPasaClick = {})
+            pasar(onPasaClick = {
+                if (playerTurn1) {
+                    playerTurn1 = false
+                    playerTurn2 = true
+                    //definimos isClicked a false para que el jug no pueda pedir cartas de nuevo
+                    btnPasarP1IsClicked = true
+                } else if (playerTurn2) {
+                    playerTurn1 = true
+                    playerTurn2 = false
+                    //definimos isClicked a false para que el jug no pueda pedir cartas de nuevo
+                    btnPasarP2IsClicked = true
+                }
+            })
         }
 
         ShowPuntosJugadores(puntPlayer1 = puntPlayer1, puntPlayer2 = puntPlayer2)
 
         TurnoJugador(turnoJug1 = playerTurn1)
 
-        /*puntuacionesPartida(
+        puntuacionesPartida(
             puntPlayer1 = puntPlayer1,
             manoSizeP1 = handPlayer1,
             puntPlayer2 = puntPlayer2,
             manoSizeP2 = handPlayer2,
             btnPasarP1IsClicked,
             btnPasarP2IsClicked
-        )*/
-
+        )
 
     }
 
@@ -259,21 +283,7 @@ if (playerTurn1 && !btnPasarP1IsClicked && puntPlayer1 < 21) {
                 }
  */
 
-/* LOGICA BOOLEAN DE BOTON PASAR (FUNCIONA)
-     if (playerTurn1) {
-                        playerTurn1 = false
-                        playerTurn2 = true
-                        //definimos isClicked a false para que el jug no pueda pedir cartas de nuevo
-                        btnPasarP1IsClicked = true
-                    } else if (playerTurn2) {
-                        playerTurn1 = true
-                        playerTurn2 = false
-                        //definimos isClicked a false para que el jug no pueda pedir cartas de nuevo
-                        btnPasarP2IsClicked = true
-                    }
- */
-
-/*@Composable
+@Composable
 fun puntuacionesPartida(
     puntPlayer1: Int,
     manoSizeP1: MutableList<Int>,
@@ -301,7 +311,7 @@ fun puntuacionesPartida(
             }
         }
     }
-}*/
+}
 
 //Funcion que nos muestra el turno de cada jugador
 @Composable
