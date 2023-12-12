@@ -19,9 +19,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,9 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.cartaalta.funciones.Baraja
 import com.example.cartaalta.R
-import com.example.cartaalta.funciones.Jugador
 import com.example.cartaalta.funciones.ViewModel
 import com.example.cartaalta.modelo.Routes
 
@@ -49,7 +45,7 @@ fun Wallpaper() {
 }
 
 @Composable
-fun Modo2vs2(navController: NavHostController) {
+fun Modo1vs1(navController: NavHostController) {
     Row(Modifier.padding(10.dp)) {
         Button(
             onClick = { navController.navigate(Routes.Pantalla2.route) },
@@ -100,16 +96,16 @@ fun ChooseGameMode(navController: NavHostController) {
         Row {
             Text(text = "Seleccione modo de juego")
         }
-        Modo2vs2(navController = navController)
+        Modo1vs1(navController = navController)
         ModoVsBanca(navController = navController)
     }
 }
 
-//funcion que nos va imprimiendo las cartas en base a la mano y un contexto
 @Composable
-fun BucleCarta(mano: MutableList<Int>, context: Context) {
+fun PintaCartasManoJugador(viewModel: ViewModel, context: Context, cartas: Int, idJugador: Int) {
+
     LazyRow {
-        items(mano) { item ->
+        items(viewModel.getHandPlayer(idJugador)) { item ->
             val intCarta = context.resources.getIdentifier(
                 "c${item}",
                 "drawable",
@@ -124,28 +120,44 @@ fun BucleCarta(mano: MutableList<Int>, context: Context) {
     }
 }
 
-
-/**
- * Metodo que va actualizando nuestra carta
- */
 @Composable
-fun UpdateCard(dorsoCarta: String, context: Context): Int {
-    return context.resources.getIdentifier(
-        dorsoCarta,
-        "drawable",
-        context.packageName
-    )
+fun ImprimeCartasJugadores(viewModel: ViewModel, context: Context, cartas: Int) {
+    Column(
+        Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Bottom,
+    ) {
+        PintaCartasManoJugador(
+            viewModel = viewModel,
+            context = context,
+            cartas = cartas,
+            idJugador = 1
+        )
+    }
+    Column(
+        Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Top,
+    ) {
+        PintaCartasManoJugador(
+            viewModel = viewModel,
+            context = context,
+            cartas = cartas,
+            idJugador = 2
+        )
+
+    }
+
 }
 
 //@Preview
 @Composable
 fun Juego(viewModel: ViewModel) {
-
     Wallpaper()
-    //Variables necesarias para las cartas de nuestro juego
-    val context = LocalContext.current
 
-    BucleCarta(mano = viewModel.getHandPlayer(1), context = context)
+    val context = LocalContext.current
+    val cartas: Int by viewModel._numCartasJug.observeAsState(0)
+
+
+    ImprimeCartasJugadores(viewModel = viewModel, context = context, cartas = cartas)
 
     Column(
         Modifier
@@ -155,12 +167,18 @@ fun Juego(viewModel: ViewModel) {
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
 
+
         Row {
             dameCartaJugador1(onDameCartaClick = { viewModel.addCardToHandPlayer(1) })
             pasar(onPasaClick = {})
         }
 
-        //ShowPuntosJugadores(puntPlayer1 = puntPlayer1, puntPlayer2 = puntPlayer2)
+        Row {
+            dameCartaJugador1(onDameCartaClick = { viewModel.addCardToHandPlayer(2) })
+            pasar(onPasaClick = {})
+        }
+
+        ShowPuntosJugadores(puntPlayer1 = viewModel.puntosJug1, puntPlayer2 = viewModel.puntosJug2)
 
         //TurnoJugador(turnoJug1 = playerTurn1)
 
