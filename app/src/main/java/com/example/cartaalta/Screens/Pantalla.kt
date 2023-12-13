@@ -156,7 +156,7 @@ fun Juego(viewModel: ViewModel) {
     val context = LocalContext.current
     val cartas: Int by viewModel._numCartasJug.observeAsState(0)
 
-
+//Dejarlo impresión manual (imprime mal las cartas)
     ImprimeCartasJugadores(viewModel = viewModel, context = context, cartas = cartas)
 
     Column(
