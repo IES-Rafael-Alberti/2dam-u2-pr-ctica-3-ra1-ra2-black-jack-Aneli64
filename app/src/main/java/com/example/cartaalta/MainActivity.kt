@@ -31,8 +31,6 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Baraja.crearBaraja()
-                    Baraja.barajar()
                     //creamos variable controller para movernos por las pantallas
                     val navController = rememberNavController()
                     NavHost(

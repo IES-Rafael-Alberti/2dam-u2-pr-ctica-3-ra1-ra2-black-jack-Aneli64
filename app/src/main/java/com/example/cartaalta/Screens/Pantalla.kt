@@ -102,10 +102,10 @@ fun ChooseGameMode(navController: NavHostController) {
 }
 
 @Composable
-fun PintaCartasManoJugador(viewModel: ViewModel, context: Context, cartas: Int, idJugador: Int) {
+fun PintaCartasManoJugador(context: Context, cartasMano: MutableList<Int>, cartas: Int) {
 
     LazyRow {
-        items(viewModel.getHandPlayer(idJugador)) { item ->
+        items(cartasMano) { item ->
             val intCarta = context.resources.getIdentifier(
                 "c${item}",
                 "drawable",
@@ -121,16 +121,15 @@ fun PintaCartasManoJugador(viewModel: ViewModel, context: Context, cartas: Int, 
 }
 
 @Composable
-fun ImprimeCartasJugadores(viewModel: ViewModel, context: Context, cartas: Int) {
+fun ImprimeCartasJugadores(viewModel: ViewModel, context: Context, cartasJ1: Int, cartasJ2: Int) {
     Column(
         Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Bottom,
     ) {
         PintaCartasManoJugador(
-            viewModel = viewModel,
             context = context,
-            cartas = cartas,
-            idJugador = 1
+            cartasMano = viewModel.getHandPlayer(1),
+            cartas = cartasJ1
         )
     }
     Column(
@@ -138,10 +137,9 @@ fun ImprimeCartasJugadores(viewModel: ViewModel, context: Context, cartas: Int) 
         verticalArrangement = Arrangement.Top,
     ) {
         PintaCartasManoJugador(
-            viewModel = viewModel,
             context = context,
-            cartas = cartas,
-            idJugador = 2
+            cartasMano = viewModel.getHandPlayer(2),
+            cartas = cartasJ2
         )
 
     }
@@ -154,10 +152,10 @@ fun Juego(viewModel: ViewModel) {
     Wallpaper()
 
     val context = LocalContext.current
-    val cartas: Int by viewModel._numCartasJug.observeAsState(0)
+    val cartasJ1: Int by viewModel._numCartasJug1.observeAsState(0)
+    val cartasJ2: Int by viewModel._numCartasJug2.observeAsState(0)
 
-//Dejarlo impresión manual (imprime mal las cartas)
-    ImprimeCartasJugadores(viewModel = viewModel, context = context, cartas = cartas)
+    ImprimeCartasJugadores(viewModel = viewModel, context = context, cartasJ1, cartasJ2)
 
     Column(
         Modifier
@@ -169,120 +167,25 @@ fun Juego(viewModel: ViewModel) {
 
 
         Row {
-            dameCartaJugador1(onDameCartaClick = { viewModel.addCardToHandPlayer(1) })
-            pasar(onPasaClick = {})
+            dameCartaJugador(onDameCartaClick = { viewModel.addCardToHandPlayer(2) })
+            pasar(onPasaClick = { viewModel.btnPasarJ2IsClicked.value = true })
         }
 
         Row {
-            dameCartaJugador1(onDameCartaClick = { viewModel.addCardToHandPlayer(2) })
-            pasar(onPasaClick = {})
+            dameCartaJugador(onDameCartaClick = { viewModel.addCardToHandPlayer(1) })
+            pasar(onPasaClick = { viewModel.btnPasarJ1IsClicked.value = true })
         }
 
         ShowPuntosJugadores(puntPlayer1 = viewModel.puntosJug1, puntPlayer2 = viewModel.puntosJug2)
 
-        //TurnoJugador(turnoJug1 = playerTurn1)
 
-        /*puntuacionesPartida(
-            puntPlayer1 = puntPlayer1,
-            manoSizeP1 = handPlayer1,
-            puntPlayer2 = puntPlayer2,
-            manoSizeP2 = handPlayer2,
-            btnPasarP1IsClicked,
-            btnPasarP2IsClicked
-        )*/
 
 
     }
-
-    //UpdateCard(dorsoCarta = dorsoCarta, context = context)
-
 
 }
 
-/* CODIGO A REVISAR (CODIGO DE BOTON DAME CARTA - FUNCIONANDO)
-if (playerTurn1 && !btnPasarP1IsClicked && puntPlayer1 < 21) {
-                    dorsoCarta = "c${carta.idDrawable}"
-                    player1.mano.add(carta.idDrawable)
-                    if (!btnPasarP2IsClicked) {
-                        playerTurn1 = false
-                        playerTurn2 = true
-                    }
-                    if (carta.puntosMin == 1) {
-                        if (puntPlayer1 + carta.puntosMax < 21) puntPlayer1 += carta.puntosMax else puntPlayer1 += carta.puntosMin
-                    } else puntPlayer1 += carta.puntosMin
 
-
-                } else if (playerTurn2 && !btnPasarP2IsClicked && puntPlayer2 < 21) {
-                    dorsoCarta = "c${carta.idDrawable}"
-                    player2.mano.add(carta.idDrawable)
-                    if (!btnPasarP1IsClicked) {
-                        playerTurn1 = true
-                        playerTurn2 = false
-                    }
-                    if (carta.puntosMin == 1) {
-                        if (puntPlayer2 + carta.puntosMax < 21) puntPlayer2 += carta.puntosMax else puntPlayer2 += carta.puntosMin
-                    } else puntPlayer2 += carta.puntosMin
-                }
- */
-
-/* LOGICA BOOLEAN DE BOTON PASAR (FUNCIONA)
-     if (playerTurn1) {
-                        playerTurn1 = false
-                        playerTurn2 = true
-                        //definimos isClicked a false para que el jug no pueda pedir cartas de nuevo
-                        btnPasarP1IsClicked = true
-                    } else if (playerTurn2) {
-                        playerTurn1 = true
-                        playerTurn2 = false
-                        //definimos isClicked a false para que el jug no pueda pedir cartas de nuevo
-                        btnPasarP2IsClicked = true
-                    }
- */
-
-/*@Composable
-fun puntuacionesPartida(
-    puntPlayer1: Int,
-    manoSizeP1: MutableList<Int>,
-    puntPlayer2: Int,
-    manoSizeP2: MutableList<Int>,
-    botonPasarJ1: Boolean,
-    botonPasarJ2: Boolean
-) {
-
-    var boolPuntosValidos = false
-    var boolPuntosMayor = false
-    var boolNumCartas = false
-
-    when {
-        puntPlayer1 <= 21 -> boolPuntosValidos = true
-        puntPlayer1 > puntPlayer2 -> boolPuntosMayor = true
-        manoSizeP1.size < manoSizeP2.size -> boolNumCartas = true
-    }
-    if (botonPasarJ1 && botonPasarJ2) {
-        when {
-            boolPuntosValidos && boolPuntosMayor -> Text(text = "GANADOR JUGADOR 1!!!")
-            boolPuntosValidos && !boolPuntosMayor -> Text(text = "GANADOR JUGADOR 2!!!")
-            puntPlayer1 == puntPlayer2 -> {
-                if (boolNumCartas) Text(text = "GANADOR JUGADOR 1!!!") else Text(text = "GANADOR JUGADOR 2!!!")
-            }
-        }
-    }
-}*/
-
-//Funcion que nos muestra el turno de cada jugador
-@Composable
-fun TurnoJugador(turnoJug1: Boolean) {
-    if (turnoJug1) {
-        Row(Modifier.padding(30.dp)) {
-            Text(text = "Turno Jugador 1")
-        }
-    } else {
-        Row(Modifier.padding(30.dp)) {
-            Text(text = "Turno Jugador 2")
-        }
-    }
-
-}
 
 @Composable
 fun PuntosJug1(puntosJug1: Int) {
@@ -305,30 +208,7 @@ fun ShowPuntosJugadores(puntPlayer1: Int, puntPlayer2: Int) {
 
 //Funcion lambda que al pulsar en el boton dame carta, obtiene una carta de la baraja
 @Composable
-fun dameCartaJugador1(onDameCartaClick: () -> Unit) {
-    Row(Modifier.padding(10.dp)) {
-        Button(
-            onClick = {
-                onDameCartaClick()
-            },
-            Modifier
-                .padding(10.dp)
-                .border(2.dp, color = Color.Red, shape = CircleShape),
-            colors = ButtonDefaults.textButtonColors(Color.White)
-        ) {
-            Text(
-                text = "Dame carta",
-                color = Color.Black,
-                fontWeight = FontWeight.Bold,
-                fontSize = 20.sp
-            )
-        }
-    }
-}
-
-//Funcion lambda que al pulsar en el boton dame carta, obtiene una carta de la baraja
-@Composable
-fun dameCartaJugador2(onDameCartaClick: () -> Unit) {
+fun dameCartaJugador(onDameCartaClick: () -> Unit) {
     Row(Modifier.padding(10.dp)) {
         Button(
             onClick = {
