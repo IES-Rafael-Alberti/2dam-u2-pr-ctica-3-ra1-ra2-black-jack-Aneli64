@@ -5,6 +5,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.navigation.NavHostController
 
 
 class ViewModel(app: Application) : AndroidViewModel(app) {
@@ -20,11 +21,14 @@ class ViewModel(app: Application) : AndroidViewModel(app) {
     var puntosJug1 = 0
     var puntosJug2 = 0
 
-    var btnPedirCartaJ1IsClicked = MutableLiveData<Boolean>()
-    var btnPedirCartaJ2IsClicked = MutableLiveData<Boolean>()
+    private var btnPedirCartaJ1IsClicked = MutableLiveData<Boolean>()
+    private var btnPedirCartaJ2IsClicked = MutableLiveData<Boolean>()
 
-    var btnPasarJ1IsClicked = MutableLiveData<Boolean>()
-    var btnPasarJ2IsClicked = MutableLiveData<Boolean>()
+    private var btnPasarJ1IsClicked = MutableLiveData<Boolean>()
+    private var btnPasarJ2IsClicked = MutableLiveData<Boolean>()
+
+    var boolSalirPartidaJ1 = MutableLiveData<Boolean>()
+    var boolSalirPartidaJ2 = MutableLiveData<Boolean>()
 
 
     init {
@@ -40,6 +44,10 @@ class ViewModel(app: Application) : AndroidViewModel(app) {
         btnPasarJ1IsClicked.value = false
         btnPasarJ2IsClicked.value = false
 
+        boolSalirPartidaJ1.value = false
+        boolSalirPartidaJ2.value = false
+
+
     }
 
     fun getHandPlayer(id: Int): MutableList<Int> {
@@ -50,52 +58,51 @@ class ViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
-    fun turnosTerminados(){
-        if (btnPasarJ1IsClicked.value == true && btnPasarJ2IsClicked.value == true){
-            btnPedirCartaJ1IsClicked.value = true
-            btnPedirCartaJ2IsClicked.value = true
-            btnPasarJ1IsClicked.value = false
-            btnPasarJ2IsClicked.value = false
-
-        }
-    }
-
-
     fun addCardToHandPlayer(id: Int) {
         val carta = Baraja.dameCarta()
         when (id) {
             1 -> {
-                turnosTerminados()
-                if (!btnPedirCartaJ1IsClicked.value!! && !btnPasarJ1IsClicked.value!!) {
+                if (!btnPedirCartaJ1IsClicked.value!! && puntosJug1 < 21 && btnPasarJ1IsClicked.value == false) {
                     jugador1.value?.mano?.add(carta.idDrawable)
                     numCartasJug1.value = jugador1.value?.mano?.size
                     puntosJug1 += carta.puntosMin //hay que controlar que sea 1 u 11 la carta
                     btnPedirCartaJ1IsClicked.value = true
                     btnPedirCartaJ2IsClicked.value = false
-                }
-                else if(btnPasarJ2IsClicked.value == true){
+                } else if (btnPasarJ2IsClicked.value == true && puntosJug1 < 21) {
                     jugador1.value?.mano?.add(carta.idDrawable)
                     numCartasJug1.value = jugador1.value?.mano?.size
-                    puntosJug1 += carta.puntosMin
+                    puntosJug1 += carta.puntosMin //hay que controlar que sea 1 u 11 la carta
+                } else {
+                    boolSalirPartidaJ1.value = true
+                    pasarPlayer(1)
                 }
-
             }
 
             2 -> {
-                turnosTerminados()
-                if (!btnPedirCartaJ2IsClicked.value!! && !btnPasarJ2IsClicked.value!!) {
+                if (!btnPedirCartaJ2IsClicked.value!! && puntosJug2 < 21 && btnPasarJ2IsClicked.value == false) {
                     jugador2.value?.mano?.add(carta.idDrawable)
                     numCartasJug2.value = jugador2.value?.mano?.size
                     puntosJug2 += carta.puntosMin
                     btnPedirCartaJ2IsClicked.value = true
                     btnPedirCartaJ1IsClicked.value = false
                 }
-                else if(btnPasarJ1IsClicked.value == true){
+                else if(btnPasarJ1IsClicked.value == true && puntosJug2 < 21){
                     jugador2.value?.mano?.add(carta.idDrawable)
                     numCartasJug2.value = jugador2.value?.mano?.size
                     puntosJug2 += carta.puntosMin
+                } else {
+                    boolSalirPartidaJ2.value = true
+                    pasarPlayer(2)
                 }
             }
+        }
+    }
+
+    fun pasarPlayer(id: Int) { //REVISAR MIRAR USAR CONTADORES MEJOR!
+        if (id == 1) {
+            if (btnPasarJ1IsClicked.value == false || btnPasarJ2IsClicked.value == true) btnPasarJ1IsClicked.value = true
+        } else {
+            if (btnPasarJ2IsClicked.value == false || btnPasarJ1IsClicked.value == true) btnPasarJ2IsClicked.value = true
         }
     }
 }

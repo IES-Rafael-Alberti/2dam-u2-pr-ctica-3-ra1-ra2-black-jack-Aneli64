@@ -17,6 +17,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -146,14 +147,38 @@ fun ImprimeCartasJugadores(viewModel: ViewModel, context: Context, cartasJ1: Int
 
 }
 
+@Composable
+fun finPartida(navController: NavHostController) {
+    navController.navigate(Routes.Pantalla4.route)
+}
+
+@Composable
+fun pantallaFinPartida(viewModel: ViewModel) {
+    Column {
+        Row {
+            Text(text = "PARTIDA FINALIZADA")
+        }
+        Row {
+            ShowPuntosJugadores(
+                puntPlayer1 = viewModel.puntosJug1,
+                puntPlayer2 = viewModel.puntosJug2
+            )
+        }
+    }
+}
+
 //@Preview
 @Composable
-fun Juego(viewModel: ViewModel) {
+fun Juego(viewModel: ViewModel, navController: NavHostController) {
     Wallpaper()
 
     val context = LocalContext.current
     val cartasJ1: Int by viewModel._numCartasJug1.observeAsState(0)
     val cartasJ2: Int by viewModel._numCartasJug2.observeAsState(0)
+
+    if (viewModel.boolSalirPartidaJ1.value == true && viewModel.boolSalirPartidaJ2.value == true){
+        finPartida(navController = navController)
+    }
 
     ImprimeCartasJugadores(viewModel = viewModel, context = context, cartasJ1, cartasJ2)
 
@@ -168,23 +193,21 @@ fun Juego(viewModel: ViewModel) {
 
         Row {
             dameCartaJugador(onDameCartaClick = { viewModel.addCardToHandPlayer(2) })
-            pasar(onPasaClick = { viewModel.btnPasarJ2IsClicked.value = true })
+            pasar(onPasaClick = { viewModel.pasarPlayer(2) })
         }
 
         Row {
             dameCartaJugador(onDameCartaClick = { viewModel.addCardToHandPlayer(1) })
-            pasar(onPasaClick = { viewModel.btnPasarJ1IsClicked.value = true })
+            pasar(onPasaClick = { viewModel.pasarPlayer(1) })
         }
 
-        ShowPuntosJugadores(puntPlayer1 = viewModel.puntosJug1, puntPlayer2 = viewModel.puntosJug2)
-
-
-
+        ShowPuntosJugadores(
+            puntPlayer1 = viewModel.puntosJug1,
+            puntPlayer2 = viewModel.puntosJug2
+        )
 
     }
-
 }
-
 
 
 @Composable
