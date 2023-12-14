@@ -19,6 +19,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -167,7 +168,6 @@ fun pantallaFinPartida(viewModel: ViewModel) {
     }
 }
 
-//@Preview
 @Composable
 fun Juego(viewModel: ViewModel, navController: NavHostController) {
     Wallpaper()
@@ -176,37 +176,44 @@ fun Juego(viewModel: ViewModel, navController: NavHostController) {
     val cartasJ1: Int by viewModel._numCartasJug1.observeAsState(0)
     val cartasJ2: Int by viewModel._numCartasJug2.observeAsState(0)
 
-    if (viewModel.boolSalirPartidaJ1.value == true && viewModel.boolSalirPartidaJ2.value == true){
+    val btnPasarJ1: Boolean by viewModel.btnPasarJ1IsClicked.observeAsState(false)
+    val btnPasarJ2: Boolean by viewModel.btnPasarJ2IsClicked.observeAsState(false)
+
+
+    viewModel.salirPartida(btnPasarJ1, btnPasarJ2)
+
+    if (viewModel.boolSalirPartida){
         finPartida(navController = navController)
     }
 
+
     ImprimeCartasJugadores(viewModel = viewModel, context = context, cartasJ1, cartasJ2)
 
-    Column(
-        Modifier
-            .fillMaxSize()
-            .padding(10.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
+        Column(
+            Modifier
+                .fillMaxSize()
+                .padding(10.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
 
+//ESTOS 4 BOTONES QUE ESTEN EN FUNCIONES FUERA PARA QUITAR DE AQUI LOS ROW
+            Row {
+                dameCartaJugador(onDameCartaClick = { viewModel.addCardToHandPlayer(2) })
+                pasar(onPasaClick = { viewModel.pasarPlayer(2) })
+            }
 
-        Row {
-            dameCartaJugador(onDameCartaClick = { viewModel.addCardToHandPlayer(2) })
-            pasar(onPasaClick = { viewModel.pasarPlayer(2) })
+            Row {
+                dameCartaJugador(onDameCartaClick = { viewModel.addCardToHandPlayer(1) })
+                pasar(onPasaClick = { viewModel.pasarPlayer(1) })
+            }
+
+            ShowPuntosJugadores(
+                puntPlayer1 = viewModel.puntosJug1,
+                puntPlayer2 = viewModel.puntosJug2
+            )
+
         }
-
-        Row {
-            dameCartaJugador(onDameCartaClick = { viewModel.addCardToHandPlayer(1) })
-            pasar(onPasaClick = { viewModel.pasarPlayer(1) })
-        }
-
-        ShowPuntosJugadores(
-            puntPlayer1 = viewModel.puntosJug1,
-            puntPlayer2 = viewModel.puntosJug2
-        )
-
-    }
 }
 
 

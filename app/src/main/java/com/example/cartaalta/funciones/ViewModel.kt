@@ -21,14 +21,14 @@ class ViewModel(app: Application) : AndroidViewModel(app) {
     var puntosJug1 = 0
     var puntosJug2 = 0
 
-    private var btnPedirCartaJ1IsClicked = MutableLiveData<Boolean>()
-    private var btnPedirCartaJ2IsClicked = MutableLiveData<Boolean>()
+    private var _btnPasarJ1IsClicked = MutableLiveData<Boolean>()
+    var btnPasarJ1IsClicked = _btnPasarJ1IsClicked
+    private var _btnPasarJ2IsClicked = MutableLiveData<Boolean>()
+    var btnPasarJ2IsClicked = _btnPasarJ2IsClicked
 
-    private var btnPasarJ1IsClicked = MutableLiveData<Boolean>()
-    private var btnPasarJ2IsClicked = MutableLiveData<Boolean>()
+    private var turnoJugador = 1
 
-    var boolSalirPartidaJ1 = MutableLiveData<Boolean>()
-    var boolSalirPartidaJ2 = MutableLiveData<Boolean>()
+    var boolSalirPartida = false
 
 
     init {
@@ -38,15 +38,8 @@ class ViewModel(app: Application) : AndroidViewModel(app) {
         jugador1.value = Jugador("jugador1", mutableListOf())
         jugador2.value = Jugador("jugador2", mutableListOf())
 
-        btnPedirCartaJ1IsClicked.value = false
-        btnPedirCartaJ2IsClicked.value = false
-
-        btnPasarJ1IsClicked.value = false
-        btnPasarJ2IsClicked.value = false
-
-        boolSalirPartidaJ1.value = false
-        boolSalirPartidaJ2.value = false
-
+        _btnPasarJ1IsClicked.value = false
+        _btnPasarJ2IsClicked.value = false
 
     }
 
@@ -58,51 +51,59 @@ class ViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
+    fun salirPartida(btnPasarJ1: Boolean, btnPasarJ2: Boolean) {
+        if ((btnPasarJ1 || puntosJug1 >= 21) && (btnPasarJ2 || puntosJug2 >= 21)) {
+            boolSalirPartida = true
+        }
+    }
+
     fun addCardToHandPlayer(id: Int) {
         val carta = Baraja.dameCarta()
         when (id) {
             1 -> {
-                if (!btnPedirCartaJ1IsClicked.value!! && puntosJug1 < 21 && btnPasarJ1IsClicked.value == false) {
-                    jugador1.value?.mano?.add(carta.idDrawable)
-                    numCartasJug1.value = jugador1.value?.mano?.size
-                    puntosJug1 += carta.puntosMin //hay que controlar que sea 1 u 11 la carta
-                    btnPedirCartaJ1IsClicked.value = true
-                    btnPedirCartaJ2IsClicked.value = false
-                } else if (btnPasarJ2IsClicked.value == true && puntosJug1 < 21) {
-                    jugador1.value?.mano?.add(carta.idDrawable)
-                    numCartasJug1.value = jugador1.value?.mano?.size
-                    puntosJug1 += carta.puntosMin //hay que controlar que sea 1 u 11 la carta
-                } else {
-                    boolSalirPartidaJ1.value = true
-                    pasarPlayer(1)
+                if (!btnPasarJ1IsClicked.value!!) {
+                    if (puntosJug1 < 21 && turnoJugador == 1 && !btnPasarJ2IsClicked.value!!) {
+                        jugador1.value?.mano?.add(carta.idDrawable)
+                        numCartasJug1.value = jugador1.value?.mano?.size
+                        puntosJug1 += carta.puntosMin //hay que controlar que sea 1 u 11 la carta
+                        turnoJugador = 2
+                    } else if (puntosJug1 < 21 && turnoJugador == 1 || puntosJug2 >= 21 && puntosJug1 < 21) {
+                        jugador1.value?.mano?.add(carta.idDrawable)
+                        numCartasJug1.value = jugador1.value?.mano?.size
+                        puntosJug1 += carta.puntosMin //hay que controlar que sea 1 u 11 la carta
+                    }
                 }
             }
 
             2 -> {
-                if (!btnPedirCartaJ2IsClicked.value!! && puntosJug2 < 21 && btnPasarJ2IsClicked.value == false) {
-                    jugador2.value?.mano?.add(carta.idDrawable)
-                    numCartasJug2.value = jugador2.value?.mano?.size
-                    puntosJug2 += carta.puntosMin
-                    btnPedirCartaJ2IsClicked.value = true
-                    btnPedirCartaJ1IsClicked.value = false
-                }
-                else if(btnPasarJ1IsClicked.value == true && puntosJug2 < 21){
-                    jugador2.value?.mano?.add(carta.idDrawable)
-                    numCartasJug2.value = jugador2.value?.mano?.size
-                    puntosJug2 += carta.puntosMin
-                } else {
-                    boolSalirPartidaJ2.value = true
-                    pasarPlayer(2)
+                if (!btnPasarJ2IsClicked.value!!) {
+                    if (puntosJug2 < 21 && turnoJugador == 2 && !btnPasarJ1IsClicked.value!!) {
+                        jugador2.value?.mano?.add(carta.idDrawable)
+                        numCartasJug2.value = jugador2.value?.mano?.size
+                        puntosJug2 += carta.puntosMin
+                        turnoJugador = 1
+                    } else if (puntosJug2 < 21 && turnoJugador == 2 || puntosJug1 >= 21 && puntosJug2 < 21) {
+                        jugador2.value?.mano?.add(carta.idDrawable)
+                        numCartasJug2.value = jugador2.value?.mano?.size
+                        puntosJug2 += carta.puntosMin
+                    }
                 }
             }
         }
+
     }
 
-    fun pasarPlayer(id: Int) { //REVISAR MIRAR USAR CONTADORES MEJOR!
-        if (id == 1) {
-            if (btnPasarJ1IsClicked.value == false || btnPasarJ2IsClicked.value == true) btnPasarJ1IsClicked.value = true
-        } else {
-            if (btnPasarJ2IsClicked.value == false || btnPasarJ1IsClicked.value == true) btnPasarJ2IsClicked.value = true
+    fun pasarPlayer(id: Int) {
+        when {
+            id == 1 && turnoJugador == 1 -> {
+                btnPasarJ1IsClicked.value = true
+                turnoJugador = 2
+            }
+
+            id == 2 && turnoJugador == 2 -> {
+                btnPasarJ2IsClicked.value = true
+                turnoJugador = 1
+            }
         }
     }
 }
