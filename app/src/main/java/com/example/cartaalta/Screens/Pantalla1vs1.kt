@@ -17,9 +17,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -50,7 +48,8 @@ fun Wallpaper() {
 fun Modo1vs1(navController: NavHostController) {
     Row(Modifier.padding(10.dp)) {
         Button(
-            onClick = { navController.navigate(Routes.Pantalla2.route) },
+            //onClick = { navController.navigate(Routes.Pantalla2.route) },
+            onClick = { navController.navigate(Routes.Pantalla3.route) },
             Modifier
                 .padding(10.dp)
                 .border(2.dp, color = Color.Red, shape = CircleShape),
@@ -66,42 +65,8 @@ fun Modo1vs1(navController: NavHostController) {
     }
 }
 
-@Composable
-fun ModoVsBanca(navController: NavHostController) {
-    Row(Modifier.padding(10.dp)) {
-        Button(
-            onClick = { navController.navigate(Routes.Pantalla3.route) },
-            Modifier
-                .padding(10.dp)
-                .border(2.dp, color = Color.Red, shape = CircleShape),
-            colors = ButtonDefaults.textButtonColors(Color.White)
-        ) {
-            Text(
-                text = "Contra maquina",
-                color = Color.Black,
-                fontWeight = FontWeight.Bold,
-                fontSize = 20.sp
-            )
-        }
-    }
-}
 
-@Composable
-fun ChooseGameMode(navController: NavHostController) {
-    Wallpaper()
 
-    Column(
-        Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Row {
-            Text(text = "Seleccione modo de juego")
-        }
-        Modo1vs1(navController = navController)
-        ModoVsBanca(navController = navController)
-    }
-}
 
 @Composable
 fun PintaCartasManoJugador(context: Context, cartasMano: MutableList<Int>, cartas: Int) {
@@ -149,27 +114,16 @@ fun ImprimeCartasJugadores(viewModel: ViewModel, context: Context, cartasJ1: Int
 }
 
 @Composable
-fun finPartida(navController: NavHostController) {
+fun navegafinPartidaScreen(navController: NavHostController) {
+    navController.navigate(Routes.Pantalla4.route)
+}
+
+fun navegaApuestasScreen(navController: NavHostController){
     navController.navigate(Routes.Pantalla4.route)
 }
 
 @Composable
-fun pantallaFinPartida(viewModel: ViewModel) {
-    Column {
-        Row {
-            Text(text = "PARTIDA FINALIZADA")
-        }
-        Row {
-            ShowPuntosJugadores(
-                puntPlayer1 = viewModel.puntosJug1,
-                puntPlayer2 = viewModel.puntosJug2
-            )
-        }
-    }
-}
-
-@Composable
-fun Juego(viewModel: ViewModel, navController: NavHostController) {
+fun BlackJack(viewModel: ViewModel, navController: NavHostController) {
     Wallpaper()
 
     val context = LocalContext.current
@@ -179,66 +133,62 @@ fun Juego(viewModel: ViewModel, navController: NavHostController) {
     val btnPasarJ1: Boolean by viewModel.btnPasarJ1IsClicked.observeAsState(false)
     val btnPasarJ2: Boolean by viewModel.btnPasarJ2IsClicked.observeAsState(false)
 
-
     viewModel.salirPartida(btnPasarJ1, btnPasarJ2)
 
-    if (viewModel.boolSalirPartida){
-        finPartida(navController = navController)
+    if (viewModel.boolSalirPartida) {
+        navegafinPartidaScreen(navController = navController)
+        viewModel.ganadorPartida()
     }
 
 
     ImprimeCartasJugadores(viewModel = viewModel, context = context, cartasJ1, cartasJ2)
 
-        Column(
-            Modifier
-                .fillMaxSize()
-                .padding(10.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
+    Column(
+        Modifier
+            .fillMaxSize()
+            .padding(10.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
 
 //ESTOS 4 BOTONES QUE ESTEN EN FUNCIONES FUERA PARA QUITAR DE AQUI LOS ROW
-            Row {
-                dameCartaJugador(onDameCartaClick = { viewModel.addCardToHandPlayer(2) })
-                pasar(onPasaClick = { viewModel.pasarPlayer(2) })
-            }
-
-            Row {
-                dameCartaJugador(onDameCartaClick = { viewModel.addCardToHandPlayer(1) })
-                pasar(onPasaClick = { viewModel.pasarPlayer(1) })
-            }
-
-            ShowPuntosJugadores(
-                puntPlayer1 = viewModel.puntosJug1,
-                puntPlayer2 = viewModel.puntosJug2
-            )
-
+        Row {
+            DameCartaJugador(onDameCartaClick = { viewModel.addCardToHandPlayer(2) })
+            Pasar(onPasaClick = { viewModel.pasarPlayer(2) })
         }
+
+        Row {
+            DameCartaJugador(onDameCartaClick = { viewModel.addCardToHandPlayer(1) })
+            Pasar(onPasaClick = { viewModel.pasarPlayer(1) })
+        }
+
+        ShowPlayerPoints(
+            puntPlayer1 = viewModel.puntosJug1,
+            puntPlayer2 = viewModel.puntosJug2,
+            apuestaJ1 = viewModel.apuestaJ1,
+            apuestaJ2 = viewModel.apuestaJ2
+        )
+
+    }
 }
 
-
 @Composable
-fun PuntosJug1(puntosJug1: Int) {
-    Text(text = "Puntos Jugador 1 -> $puntosJug1")
-}
-
-@Composable
-fun PuntosJug2(puntosJug2: Int) {
-    Text(text = "Puntos Jugador 2 -> $puntosJug2")
-}
-
-@Composable
-fun ShowPuntosJugadores(puntPlayer1: Int, puntPlayer2: Int) {
+fun ShowPlayerPoints(puntPlayer1: Int, puntPlayer2: Int, apuestaJ1: Int, apuestaJ2: Int) {
     Row {
-        PuntosJug1(puntosJug1 = puntPlayer1)
-        Spacer(modifier = Modifier.width(40.dp))
-        PuntosJug2(puntosJug2 = puntPlayer2)
+        Text(text = "Puntos Jugador 1 -> $puntPlayer1")
+        Spacer(modifier = Modifier.width(60.dp))
+        Text(text = "Puntos Jugador 2 -> $puntPlayer2")
+    }
+    Row {
+        Text(text = "J1 -> $apuestaJ1 fichas")
+        Spacer(modifier = Modifier.width(60.dp))
+        Text(text = "J2 -> $apuestaJ2 fichas")
     }
 }
 
 //Funcion lambda que al pulsar en el boton dame carta, obtiene una carta de la baraja
 @Composable
-fun dameCartaJugador(onDameCartaClick: () -> Unit) {
+fun DameCartaJugador(onDameCartaClick: () -> Unit) {
     Row(Modifier.padding(10.dp)) {
         Button(
             onClick = {
@@ -260,7 +210,7 @@ fun dameCartaJugador(onDameCartaClick: () -> Unit) {
 }
 
 @Composable
-fun pasar(onPasaClick: () -> Unit) {
+fun Pasar(onPasaClick: () -> Unit) {
     Row(Modifier.padding(10.dp)) {
         Button(
             onClick = {

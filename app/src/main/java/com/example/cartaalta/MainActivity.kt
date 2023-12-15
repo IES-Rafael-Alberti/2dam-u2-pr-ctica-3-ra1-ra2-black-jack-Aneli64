@@ -11,11 +11,10 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.cartaalta.Screens.ApuestasScreen
 import com.example.cartaalta.Screens.ChooseGameMode
-import com.example.cartaalta.Screens.Juego
-import com.example.cartaalta.Screens.finPartida
-import com.example.cartaalta.Screens.pantallaFinPartida
-import com.example.cartaalta.funciones.Baraja
+import com.example.cartaalta.Screens.BlackJack
+import com.example.cartaalta.Screens.PantallaFinPartida
 import com.example.cartaalta.funciones.ViewModel
 import com.example.cartaalta.modelo.Routes
 import com.example.cartaalta.ui.theme.CartaAltaTheme
@@ -39,9 +38,11 @@ class MainActivity : ComponentActivity() {
                         navController = navController, startDestination = Routes.Pantalla1.route
                     ) {
                         composable(Routes.Pantalla1.route) { ChooseGameMode(navController) }
-                        composable(Routes.Pantalla2.route) { Juego(viewModel, navController) }
-                        composable(Routes.Pantalla3.route) { Juego(viewModel, navController) }
-                        composable(Routes.Pantalla4.route) { pantallaFinPartida(viewModel) }
+                        composable(Routes.Pantalla2.route) { BlackJack(viewModel, navController) }
+                        composable(Routes.Pantalla3.route) { ApuestasScreen(viewModel, navController) }
+                        composable(Routes.Pantalla4.route) { PantallaFinPartida(viewModel) }
+
+
                     }
                 }
             }
