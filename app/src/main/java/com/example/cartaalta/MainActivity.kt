@@ -40,7 +40,7 @@ class MainActivity : ComponentActivity() {
                         composable(Routes.Pantalla1.route) { ChooseGameMode(navController) }
                         composable(Routes.Pantalla2.route) { BlackJack(viewModel, navController) }
                         composable(Routes.Pantalla3.route) { ApuestasScreen(viewModel, navController) }
-                        composable(Routes.Pantalla4.route) { PantallaFinPartida(viewModel) }
+                        composable(Routes.Pantalla4.route) { PantallaFinPartida(navController, viewModel) }
 
 
                     }

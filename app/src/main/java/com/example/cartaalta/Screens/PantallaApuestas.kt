@@ -1,6 +1,7 @@
 package com.example.cartaalta.Screens
 
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -24,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -74,14 +77,17 @@ fun ApuestasScreen(viewModel: ViewModel, navController: NavHostController) {
                     navController.navigate(Routes.Pantalla2.route)
                 } else Toast.makeText(context,"Apuesta no válida",Toast.LENGTH_LONG).show()
                 },
-                Modifier
-                    .padding(10.dp)
-                    .border(2.dp, color = Color.Red, shape = CircleShape),
-                colors = ButtonDefaults.textButtonColors(Color.White)
+                colors = ButtonDefaults.textButtonColors(Color.Black),
+                modifier = Modifier
+                    .background(color = Color.Black)
+                    .border(2.dp, color = Color.White, shape = CutCornerShape(24.dp))
+
             ) {
                 Text(
                     text = "Aceptar",
-                    color = Color.Black,
+                    modifier = Modifier.padding(20.dp),
+                    color = Color.White,
+                    fontFamily = FontFamily.Serif,
                     fontWeight = FontWeight.Bold,
                     fontSize = 20.sp
                 )

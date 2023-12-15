@@ -1,10 +1,27 @@
 package com.example.cartaalta.funciones
 
 import android.app.Application
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CutCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.navigation.NavHostController
+import com.example.cartaalta.Screens.Modo1vs1
 import java.lang.NumberFormatException
 
 class ViewModel(app: Application) : AndroidViewModel(app) {
@@ -23,15 +40,18 @@ class ViewModel(app: Application) : AndroidViewModel(app) {
     var apuestaJ1 = 0
     var apuestaJ2 = 0
 
+    var jugador1Ganador: Boolean = false
+    var jugador2Ganador: Boolean = false
+    var empateJugadores: Boolean = false
+
     private var _btnPasarJ1IsClicked = MutableLiveData<Boolean>()
     var btnPasarJ1IsClicked = _btnPasarJ1IsClicked
     private var _btnPasarJ2IsClicked = MutableLiveData<Boolean>()
     var btnPasarJ2IsClicked = _btnPasarJ2IsClicked
 
-    private var turnoJugador = 1
+    var turnoJugador = 1
 
     var boolSalirPartida = false
-
 
     init {
         Baraja.crearBaraja()
@@ -45,10 +65,10 @@ class ViewModel(app: Application) : AndroidViewModel(app) {
 
     }
 
-    fun apuestaCorrecta(apuesta: String): Boolean{
+    fun apuestaCorrecta(apuesta: String): Boolean {
         return try {
             apuesta.toInt() in 0..400
-        }catch (e:NumberFormatException) {
+        } catch (e: NumberFormatException) {
             false
         }
     }
@@ -67,19 +87,27 @@ class ViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
-    fun ganadorPartida() { //revisar a parte de que no controla el empate
-        if (puntosJug1 <= 21) {
-            if (puntosJug1 > puntosJug2) {
-                println("GANA JUGADOR 1")
-            } else if (puntosJug1 == puntosJug2) {
-                if (jugador1.value?.mano?.size!! < jugador2.value?.mano?.size!!) {
-                    println("GANA JUGADOR 1")
-                } else {
-                    println("GANA JUGADOR 2")
+    fun ganadorPartida() {
+        if (puntosJug1 <= 21 && puntosJug2 <= 21) {
+            when {
+                puntosJug1 > puntosJug2 -> jugador1Ganador = true
+                puntosJug1 < puntosJug2 -> jugador2Ganador = true
+                puntosJug1 == puntosJug2 -> {
+                    if (jugador1.value?.mano?.size!! < jugador2.value?.mano?.size!!) {
+                        jugador1Ganador = true
+                    } else if (jugador1.value?.mano?.size!! > jugador2.value?.mano?.size!!) {
+                        jugador2Ganador = true
+                    } else {
+                        empateJugadores = true
+                    }
                 }
-            } else {
-                println("GANA JUGADOR 2")
             }
+        } else if (puntosJug1 <= 21) {
+            jugador1Ganador = true
+        } else if (puntosJug2 <= 21) {
+            jugador2Ganador = true
+        } else {
+            empateJugadores = true
         }
     }
 
@@ -122,7 +150,7 @@ class ViewModel(app: Application) : AndroidViewModel(app) {
 
     }
 
-    fun chooseValor(puntosJugador: Int, carta: Carta): Int {
+    private fun chooseValor(puntosJugador: Int, carta: Carta): Int {
         var valor = 0
         if (carta.puntosMin == 1) {
             if ((puntosJugador + carta.puntosMax) <= 21) valor = carta.puntosMax
@@ -140,6 +168,32 @@ class ViewModel(app: Application) : AndroidViewModel(app) {
             id == 2 && turnoJugador == 2 -> {
                 btnPasarJ2IsClicked.value = true
                 turnoJugador = 1
+            }
+        }
+    }
+
+
+    @Composable
+    fun ResetGame(onResetClick: () -> Unit) {
+        Row(Modifier.padding(top = 10.dp, start = 50.dp)) {
+            Button(
+                onClick = {
+                    onResetClick()
+                },
+                colors = ButtonDefaults.textButtonColors(Color.Black),
+                modifier = Modifier
+                    .background(color = Color.Black)
+                    .border(2.dp, color = Color.White, shape = CutCornerShape(24.dp))
+            ) {
+
+                Text(
+                    text = "Restart",
+                    modifier = Modifier.padding(15.dp),
+                    color = Color.White,
+                    fontFamily = FontFamily.Serif,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 15.sp
+                )
             }
         }
     }
