@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -34,6 +33,12 @@ import androidx.navigation.NavHostController
 import com.example.cartaalta.funciones.ViewModel
 import com.example.cartaalta.modelo.Routes
 
+/**
+ * Pantalla donde se realizan las apuestas de los jugadores
+ *
+ * @param viewModel clase viewmodel con la logica del programa
+ * @param navController navegador de rutas entre pantallas
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ApuestasScreen(viewModel: ViewModel, navController: NavHostController) {

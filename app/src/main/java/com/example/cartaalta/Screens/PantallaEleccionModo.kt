@@ -5,7 +5,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CutCornerShape
@@ -20,6 +19,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 
+/**
+ * Pantalla que seleccina el modo de juego
+ *
+ * @param navController navegador de rutas entre pantallas
+ */
 @Composable
 fun ChooseGameMode(navController: NavHostController) {
     Wallpaper()
@@ -29,23 +33,23 @@ fun ChooseGameMode(navController: NavHostController) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-            Box(
-                modifier = Modifier
-                    .background(color = Color.Black)
-                    .border(2.dp, color = Color.White, shape = CutCornerShape(24.dp))
-            ) {
-                Text(
-                    text = "Seleccione modo de juego",
-                    modifier = Modifier.padding(20.dp),
-                    color = Color.White,
-                    fontFamily = FontFamily.Serif,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp
-                )
-            }
-
-                Modo1vs1(navController = navController)
-
+        Box(
+            modifier = Modifier
+                .background(color = Color.Black)
+                .border(2.dp, color = Color.White, shape = CutCornerShape(24.dp))
+        ) {
+            Text(
+                text = "Seleccione modo de juego",
+                modifier = Modifier.padding(20.dp),
+                color = Color.White,
+                fontFamily = FontFamily.Serif,
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp
+            )
         }
+
+        Modo1vs1(navController = navController)
+
     }
+}
 

@@ -6,39 +6,75 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.cartaalta.funciones.Jugador
 import com.example.cartaalta.funciones.ViewModel
 import com.example.cartaalta.modelo.Routes
 
+/**
+ * Metodo que navega hasta la pantalla de fin de partida
+ *
+ * @param navController navegador de rutas entre pantallas
+ */
 @Composable
 fun navegafinPartidaScreen(navController: NavHostController) {
     navController.navigate(Routes.Pantalla4.route)
 }
 
+
+/**
+ * Interfaz del reinicio del juego
+ *
+ * @param onResetClick lamba que ejecuta al hacer click en el boton Restart
+ */
+@Composable
+fun ResetGame(onResetClick: () -> Unit) {
+    Row(Modifier.padding(top = 60.dp)) {
+        Button(
+            onClick = {
+                onResetClick()
+            },
+            colors = ButtonDefaults.textButtonColors(Color.Black),
+            modifier = Modifier
+                .background(color = Color.Black)
+                .border(2.dp, color = Color.White, shape = CutCornerShape(24.dp))
+        ) {
+
+            Text(
+                text = "Restart",
+                modifier = Modifier.padding(15.dp),
+                color = Color.White,
+                fontFamily = FontFamily.Serif,
+                fontWeight = FontWeight.Bold,
+                fontSize = 15.sp
+            )
+        }
+    }
+}
+
+/**
+ * Interfaz de nuestra pantalla final de partida. En ella contamos con todos los resultados y con
+ * un boton para reiniciar la partida, en la que reiniciamos todos los valores del juego, y
+ * navegamos hasta la pagina inicial de ChooseGameMode
+ *
+ * @param navController navegador de rutas entre pantallas
+ * @param viewModel clase viewmodel con la logica del programa
+ */
 @Composable
 fun PantallaFinPartida(navController: NavHostController,viewModel: ViewModel) {
     Wallpaper()
@@ -127,7 +163,7 @@ fun PantallaFinPartida(navController: NavHostController,viewModel: ViewModel) {
 
 
         Row {
-            ShowPlayerPoints(
+            ShowPuntosApuestasPlayer(
                 puntPlayer1 = viewModel.puntosJug1,
                 puntPlayer2 = viewModel.puntosJug2,
                 apuestaJ1 = viewModel.apuestaJ1,
@@ -178,7 +214,7 @@ fun PantallaFinPartida(navController: NavHostController,viewModel: ViewModel) {
         }
 
         Row {
-            viewModel.ResetGame(onResetClick = {
+            ResetGame(onResetClick = {
                 viewModel.apuestaJ1 = 0
                 viewModel.apuestaJ2 = 0
                 viewModel.puntosJug1 = 0

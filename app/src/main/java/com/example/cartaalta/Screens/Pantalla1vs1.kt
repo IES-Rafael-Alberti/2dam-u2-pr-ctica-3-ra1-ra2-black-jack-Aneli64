@@ -13,11 +13,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -27,7 +25,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -38,7 +35,9 @@ import com.example.cartaalta.R
 import com.example.cartaalta.funciones.ViewModel
 import com.example.cartaalta.modelo.Routes
 
-//Imagen de fondo
+/**
+ * Metodo que nos imprime la imagen de fondo de nuestro programa
+ */
 @Composable
 fun Wallpaper() {
     Image(
@@ -48,6 +47,11 @@ fun Wallpaper() {
     )
 }
 
+/**
+ * Boton que navega hacia el juego BlackJack 1vs1
+ *
+ * @param navController navegador de rutas entre pantallas
+ */
 @Composable
 fun Modo1vs1(navController: NavHostController) {
     Row(Modifier.padding(10.dp)) {
@@ -70,8 +74,15 @@ fun Modo1vs1(navController: NavHostController) {
     }
 }
 
+/**
+ * Pinta todas las cartas de la mano asociados a su id
+ *
+ * @param context contexto de las operaciones
+ * @param cartasMano cartas en la mano del jugador
+ * @param cartas variable contador para la actualización del LazyRow
+ */
 @Composable
-fun PintaCartasManoJugador(context: Context, cartasMano: MutableList<Int>, cartas: Int) {
+private fun PintaCartasManoJugador(context: Context, cartasMano: MutableList<Int>, cartas: Int) {
 
     LazyRow {
         items(cartasMano) { item ->
@@ -89,6 +100,14 @@ fun PintaCartasManoJugador(context: Context, cartasMano: MutableList<Int>, carta
     }
 }
 
+/**
+ * Imprime las manos de ambas jugadores mediante el uso de PintaCartasManoJugador
+ *
+ * @param viewModel clase viewmodel con la logica del programa
+ * @param context contexto de las operaciones
+ * @param cartasJ1 cartas en la mano del jugador 1
+ * @param cartasJ2 cartas en la mano del jugador 2
+ */
 @Composable
 fun ImprimeCartasJugadores(viewModel: ViewModel, context: Context, cartasJ1: Int, cartasJ2: Int) {
     Column(
@@ -115,13 +134,21 @@ fun ImprimeCartasJugadores(viewModel: ViewModel, context: Context, cartasJ1: Int
 
 }
 
+/**
+ * Metodo principal que pone en funcionamiento el juego en base a una serie de variables liveData,
+ * condicionales de cierre, y funciones lambda
+ *
+ * @param viewModel clase viewmodel con la logica del programa
+ * @param navController navegador de rutas entre pantallas
+ */
+
 @Composable
 fun BlackJack(viewModel: ViewModel, navController: NavHostController) {
     Wallpaper()
 
     val context = LocalContext.current
-    val cartasJ1: Int by viewModel._numCartasJug1.observeAsState(0)
-    val cartasJ2: Int by viewModel._numCartasJug2.observeAsState(0)
+    val cartasJ1: Int by viewModel.numCartasJug1.observeAsState(0)
+    val cartasJ2: Int by viewModel.numCartasJug2.observeAsState(0)
 
     val btnPasarJ1: Boolean by viewModel.btnPasarJ1IsClicked.observeAsState(false)
     val btnPasarJ2: Boolean by viewModel.btnPasarJ2IsClicked.observeAsState(false)
@@ -138,6 +165,12 @@ fun BlackJack(viewModel: ViewModel, navController: NavHostController) {
 
 }
 
+/**
+ * Metodo que incluye las botones de ambos jugadores, muestra sus puntos, cantidad apostada y el
+ * turno del jugador
+ *
+ * @param viewModel clase viewmodel con la logica del programa
+ */
 @Composable
 fun InteraccionBotones(viewModel: ViewModel) {
     Column(
@@ -154,7 +187,7 @@ fun InteraccionBotones(viewModel: ViewModel) {
         }
 
         Row {
-            ShowPlayerPoints(
+            ShowPuntosApuestasPlayer(
                 puntPlayer1 = viewModel.puntosJug1,
                 puntPlayer2 = viewModel.puntosJug2,
                 apuestaJ1 = viewModel.apuestaJ1,
@@ -186,8 +219,16 @@ fun InteraccionBotones(viewModel: ViewModel) {
     }
 }
 
+/**
+ * Metodo que nos muestra los puntos y apuestas de ambos jugadores
+ *
+ * @param puntPlayer1 puntos del jugador 1
+ * @param puntPlayer2 puntos del jugador 2
+ * @param apuestaJ1 fichas apostadas del jugdor 1
+ * @param apuestaJ2 fichas apostadas del jugador 2
+ */
 @Composable
-fun ShowPlayerPoints(puntPlayer1: Int, puntPlayer2: Int, apuestaJ1: Int, apuestaJ2: Int) {
+fun ShowPuntosApuestasPlayer(puntPlayer1: Int, puntPlayer2: Int, apuestaJ1: Int, apuestaJ2: Int) {
     Column {
         Row {
             Box(
@@ -263,7 +304,13 @@ fun ShowPlayerPoints(puntPlayer1: Int, puntPlayer2: Int, apuestaJ1: Int, apuesta
     }
 }
 
-//Funcion lambda que al pulsar en el boton dame carta, obtiene una carta de la baraja
+//
+/**
+ * Funcion lambda que al pulsar en el boton dame carta, obtiene una carta de la baraja
+ *
+ * @param id jugador que pide carta
+ * @param onDameCartaClick lamba que ejecuta al hacer click en el boton Dame Carta Jx
+ */
 @Composable
 fun DameCartaJugador(id: Int, onDameCartaClick: () -> Unit) {
     Row(Modifier.padding(10.dp)) {
@@ -299,6 +346,12 @@ fun DameCartaJugador(id: Int, onDameCartaClick: () -> Unit) {
     }
 }
 
+/**
+ * Funcion lambda que al pulsar en el boton pasar, pasa el turno
+ *
+ * @param id jugador que pasa turno
+ * @param onPasaClick lamba que ejecuta al hacer click en el boton Pasar Jx
+ */
 @Composable
 fun Pasar(id: Int, onPasaClick: () -> Unit) {
     Row(Modifier.padding(10.dp)) {

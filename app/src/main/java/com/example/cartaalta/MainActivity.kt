@@ -19,6 +19,11 @@ import com.example.cartaalta.funciones.ViewModel
 import com.example.cartaalta.modelo.Routes
 import com.example.cartaalta.ui.theme.CartaAltaTheme
 
+/**
+ * Clase principal y de ejecución de nuestra app
+ *
+ * @property viewModel Inicialización del viewmodel principal de nuestra app
+ */
 class MainActivity : ComponentActivity() {
 
     private val viewModel: ViewModel by viewModels()
